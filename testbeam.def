@@ -1,0 +1,64 @@
+Bootstrap: docker
+From: almalinux:9-minimal 
+
+%arguments
+	DEF_HASH=""
+
+%setup
+mkdir ${APPTAINER_ROOTFS}/w
+mkdir ${APPTAINER_ROOTFS}/volatile
+mkdir ${APPTAINER_ROOTFS}/cache
+mkdir ${APPTAINER_ROOTFS}/scratch
+mkdir ${APPTAINER_ROOTFS}/cvmfs
+wget https://pki.jlab.org/JLabCA.crt -O  ${APPTAINER_ROOTFS}/etc/pki/ca-trust/source/anchors/JLabCA.crt
+
+
+%files 
+	./dnf.sh /opt/dnf.sh
+	./packages /opt/packages
+	./root.sh /opt/root.sh
+	./analyzer.sh /opt/analyzer.sh
+	./SBS-offline.sh /opt/SBS-offline.sh
+%post
+	ln -s /w/work /work
+	update-ca-trust
+	bash /opt/dnf.sh
+	bash /opt/root.sh
+	bash /opt/analyzer.sh
+	bash /opt/SBS-offline.sh
+	
+	NOW=`date`
+	
+	rm /opt/dnf.sh  /opt/packages /opt/root.sh /opt/analyzer.sh /opt/SBS-offline.sh
+	echo "ROOT_VERSION $(/opt/root/bin/root-config --version)" >> $APPTAINER_LABELS
+	echo "ANALYZER_HASH $(git -C /opt/analyzer-src rev-parse --short HEAD)" >> $APPTAINER_LABELS
+	
+%environment
+	export ANALYZER=/opt/analyzer
+	export PATH=/opt/root/bin:/opt/analyzer/bin:/opt/SBS-offline_SOLIDtestbeam/bin$PATH
+	export ROOTSYS=$(/opt/root/bin/root-config --prefix)
+	export LD_LIBRARY_PATH=/opt/analyzer/lib64:/opt/SBS-offline_SOLIDtestbeam/lib64/:$LD_LIBRARY_PATH
+	export ROOT_INCLUDE_PATH=/opt/SBS-offline_SOLIDtestbeam/include:/opt/analyzer/include:$ROOT_INCLUDE_PATH
+	export SBS=/opt/SBS-offline_SOLIDtestbeam
+	export SBSOFFLINE=/opt/SBS-offline_SOLIDtestbeam
+	export SBS_REPLAY=/opt/SBS-replay_SOLIDtestbeam
+	export CMAKE_PREFIX_PATH="$ANALYZER${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
+
+	
+	export OUT_DIR=${HOME}/analysis/Rootfiles
+	export DATA_DIR=${HOME}/data
+	export LOG_DIR=${HOME}/analysis/logs
+	export DB_DIR=/opt/SBS-replay_SOLIDtestbeam/DB
+%runscript
+	analyzer  "$@"
+
+%test 
+	analyzer -v
+	if [ $? -eq 0 ]; then
+        	echo "hcana is running sucessfully."
+	else
+        	echo "Build failed."
+        	exit 1
+    	fi
+%labels
+	DEF_HASH {{ DEF_HASH }}
