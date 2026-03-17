@@ -32,6 +32,8 @@ wget https://pki.jlab.org/JLabCA.crt -O  ${APPTAINER_ROOTFS}/etc/pki/ca-trust/so
 	rm /opt/dnf.sh  /opt/packages /opt/root.sh /opt/analyzer.sh /opt/SBS-offline.sh
 	echo "ROOT_VERSION $(/opt/root/bin/root-config --version)" >> $APPTAINER_LABELS
 	echo "ANALYZER_HASH $(git -C /opt/analyzer-src rev-parse --short HEAD)" >> $APPTAINER_LABELS
+	echo "REPLAY_HASH $(git -C /opt/SBS-replay_SOLIDtestbeam rev-parse --short HEAD)" >> $APPTAINER_LABELS
+	echo "SBS-OFFLINE_HASH $(git -C /opt/SBS-offline_SOLIDtestbeam-src rev-parse --short HEAD)" >> $APPTAINER_LABELS
 	
 %environment
 	export ANALYZER=/opt/analyzer
