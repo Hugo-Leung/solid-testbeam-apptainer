@@ -11,7 +11,7 @@ export LD_LIBRARY_PATH=/opt/analyzer/lib64:$LD_LIBRARY_PATH
 
 VERSION="main"
 
-git clone --depth=1  --branch ${VERSION} git@github.com:JeffersonLab/panguin.git  
+git clone --depth=1  --branch ${VERSION} https://github.com/JeffersonLab/panguin.git 
 
 cd panguin
 mkdir build 
