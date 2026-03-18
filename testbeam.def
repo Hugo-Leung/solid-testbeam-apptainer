@@ -10,6 +10,9 @@ mkdir ${APPTAINER_ROOTFS}/volatile
 mkdir ${APPTAINER_ROOTFS}/cache
 mkdir ${APPTAINER_ROOTFS}/scratch
 mkdir ${APPTAINER_ROOTFS}/cvmfs
+mkdir -p ${APPTAINER_ROOTFS}/opt/Rootfiles
+mkdir -p ${APPTAINER_ROOTFS}/opt/data
+mkdir -p ${APPTAINER_ROOTFS}/opt/logs
 wget https://pki.jlab.org/JLabCA.crt -O  ${APPTAINER_ROOTFS}/etc/pki/ca-trust/source/anchors/JLabCA.crt
 
 
@@ -19,12 +22,14 @@ wget https://pki.jlab.org/JLabCA.crt -O  ${APPTAINER_ROOTFS}/etc/pki/ca-trust/so
 	./root.sh /opt/root.sh
 	./analyzer.sh /opt/analyzer.sh
 	./SBS-offline.sh /opt/SBS-offline.sh
+	./panguin.sh /opt/panguin.sh
 %post
 	ln -s /w/work /work
 	update-ca-trust
 	bash /opt/dnf.sh
 	bash /opt/root.sh
 	bash /opt/analyzer.sh
+	bash /opt/panguin.sh
 	bash /opt/SBS-offline.sh
 	
 	NOW=`date`
@@ -34,23 +39,24 @@ wget https://pki.jlab.org/JLabCA.crt -O  ${APPTAINER_ROOTFS}/etc/pki/ca-trust/so
 	echo "ANALYZER_HASH $(git -C /opt/analyzer-src rev-parse --short HEAD)" >> $APPTAINER_LABELS
 	echo "REPLAY_HASH $(git -C /opt/SBS-replay_SOLIDtestbeam rev-parse --short HEAD)" >> $APPTAINER_LABELS
 	echo "SBS-OFFLINE_HASH $(git -C /opt/SBS-offline_SOLIDtestbeam-src rev-parse --short HEAD)" >> $APPTAINER_LABELS
+	echo "PANGUIN_HASH ${git -C /opt/panguin rev-parse --short HEAD}" >> $APPTAINER_LABELS
 	
 %environment
 	export ANALYZER=/opt/analyzer
-	export PATH=/opt/root/bin:/opt/analyzer/bin:/opt/SBS-offline_SOLIDtestbeam/bin$PATH
+	export PATH=/opt/panguin/bin:/opt/root/bin:/opt/analyzer/bin:/opt/SBS-offline_SOLIDtestbeam/bin$PATH
 	export ROOTSYS=$(/opt/root/bin/root-config --prefix)
-	export LD_LIBRARY_PATH=/opt/analyzer/lib64:/opt/SBS-offline_SOLIDtestbeam/lib64/:$LD_LIBRARY_PATH
+	export LD_LIBRARY_PATH=/opt/panguin/lib64:/opt/analyzer/lib64:/opt/SBS-offline_SOLIDtestbeam/lib64/:$LD_LIBRARY_PATH
 	export ROOT_INCLUDE_PATH=/opt/SBS-offline_SOLIDtestbeam/include:/opt/analyzer/include:$ROOT_INCLUDE_PATH
 	export SBS=/opt/SBS-offline_SOLIDtestbeam
 	export SBSOFFLINE=/opt/SBS-offline_SOLIDtestbeam
 	export SBS_REPLAY=/opt/SBS-replay_SOLIDtestbeam
 	export CMAKE_PREFIX_PATH="$ANALYZER${CMAKE_PREFIX_PATH:+:$CMAKE_PREFIX_PATH}"
-
+	export PANGUIN_CONFIG_PATH=/opt/SBS-replay_SOLIDtestbeam/onlineGUIconfig:/opt/SBS-replay_SOLIDtestbeam/onlineGUIconfig/scripts
 	
-	export OUT_DIR=${HOME}/analysis/Rootfiles
-	export DATA_DIR=${HOME}/data
-	export LOG_DIR=${HOME}/analysis/logs
 	export DB_DIR=/opt/SBS-replay_SOLIDtestbeam/DB
+	export OUT_DIR=/opt/Rootfiles
+	export DATA_DIR=/opt/data
+	export LOG_DIR=/opt/logs
 %runscript
 	analyzer  "$@"
 
