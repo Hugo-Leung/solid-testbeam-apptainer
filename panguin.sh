@@ -23,4 +23,4 @@ ncpu=$(nproc)
 if [[ ${ncpu} -lt ${njobs} ]]; then
 	njobs=${cpu}
 fi
-cmake --build build -j${njobs}
+cmake --build . -j${njobs}

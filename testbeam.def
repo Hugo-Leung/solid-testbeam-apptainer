@@ -39,7 +39,7 @@ wget https://pki.jlab.org/JLabCA.crt -O  ${APPTAINER_ROOTFS}/etc/pki/ca-trust/so
 	echo "ANALYZER_HASH $(git -C /opt/analyzer-src rev-parse --short HEAD)" >> $APPTAINER_LABELS
 	echo "REPLAY_HASH $(git -C /opt/SBS-replay_SOLIDtestbeam rev-parse --short HEAD)" >> $APPTAINER_LABELS
 	echo "SBS-OFFLINE_HASH $(git -C /opt/SBS-offline_SOLIDtestbeam-src rev-parse --short HEAD)" >> $APPTAINER_LABELS
-	echo "PANGUIN_HASH ${git -C /opt/panguin rev-parse --short HEAD}" >> $APPTAINER_LABELS
+	echo "PANGUIN_HASH $(git -C /opt/panguin rev-parse --short HEAD)" >> $APPTAINER_LABELS
 	
 %environment
 	export ANALYZER=/opt/analyzer
