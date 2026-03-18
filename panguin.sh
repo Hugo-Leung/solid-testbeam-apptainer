@@ -24,3 +24,4 @@ if [[ ${ncpu} -lt ${njobs} ]]; then
 	njobs=${cpu}
 fi
 cmake --build . -j${njobs}
+make install
