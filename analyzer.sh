@@ -23,5 +23,3 @@ cmake -DCMAKE_INSTALL_PREFIX=/opt/analyzer ..
 make -j${njobs} install
 
 
-echo /opt/analyzer/lib64 >> /etc/ld.so.conf
-ldconfig
