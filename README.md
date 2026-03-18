@@ -22,19 +22,38 @@ We need to specify the location of the evio files, root files and the log file
 ```
 apptainer shell -B <Path to data>:/opt/data,<Path to root files>:/opt/Rootfiles,<Path to log files>:/opt/logs testbeam.sif 
 ```
-This can also be specify in `APPTAINER_BINDPATH` environment variable, such as
+This can also be specified in the `APPTAINER_BINDPATH` environment variable, such as
 ```
 export APPTAINER_BINDPATH=<Path to data>:/opt/data,<Path to root files>:/opt/Rootfiles,<Path to log files>:/opt/logs
 ```
+This can be added to .bash_profile and these paths will be binded every time.
 
 To excute a command in the container
 ```
 apptainer exec testbeam.sif <command>
 ```
 
-The replays are placed in `\opt\SBS-replay_SOLIDtestbeam`
+Installed software
+-------------------
+* Hall A analyzer (https://github.com/JeffersonLab/analyzer)
 
-To directly execue analyzer and run a replay
+Analyzer is set as the default command and will be excuted by
+```
+apptainer run testbeam.sif 
+```
+
+* Panguin (https://github.com/JeffersonLab/panguin)
+```
+apptainer exec testbeam.sif panguin 
+```
+
+* SBS-offline_SOLIDtestbeam (https://github.com/JeffersonLab/SBS-offline_SOLIDtestbeam)
+
+This is installed in `/opt/SBS-offline_SOLIDtestbeam`
+
+* SBS-replay_SOLIDtestbeam (https://github.com/JeffersonLab/SBS-replay_SOLIDtestbeam)
+
+The replays are placed in `\opt\SBS-replay_SOLIDtestbeam`. To directly execue analyzer and run a replay
 ```
 apptainer run testbeam.sif <replay script>
 ```
