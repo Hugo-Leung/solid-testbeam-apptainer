@@ -8,9 +8,24 @@ I am using [apptainer](https://apptainer.org). So it have to be installed first
 
 Building the image
 ---------
+The container image is split into two part, `base` contains ROOT and other system libraries; and `testbeam` will add the analyzer and the replays. This is done because compiling root from source can take a long time. 
+
+A script is provided to compile the two images. To build the first base image.
 ```
-apptainer build testbeam.sif testbeam.def
+./build-container.sh -b
 ```
+
+To add analyser and replays.
+```
+./build-container.sh -r
+```
+
+
+To build everything
+```
+./build-container.sh -a 
+```
+
 
 Using the container
 --------
