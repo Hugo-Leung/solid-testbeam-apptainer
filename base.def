@@ -1,0 +1,50 @@
+Bootstrap: docker
+From: almalinux:9-minimal 
+
+%arguments
+	DEF_HASH=""
+
+%setup
+mkdir ${APPTAINER_ROOTFS}/w
+mkdir ${APPTAINER_ROOTFS}/volatile
+mkdir ${APPTAINER_ROOTFS}/cache
+mkdir ${APPTAINER_ROOTFS}/scratch
+mkdir ${APPTAINER_ROOTFS}/cvmfs
+mkdir -p ${APPTAINER_ROOTFS}/opt/Rootfiles
+mkdir -p ${APPTAINER_ROOTFS}/opt/data
+mkdir -p ${APPTAINER_ROOTFS}/opt/logs
+wget https://pki.jlab.org/JLabCA.crt -O  ${APPTAINER_ROOTFS}/etc/pki/ca-trust/source/anchors/JLabCA.crt
+
+
+%files 
+	./dnf.sh /opt/dnf.sh
+	./packages /opt/packages
+	./root.sh /opt/root.sh
+%post
+	ln -s /w/work /work
+	update-ca-trust
+	bash /opt/dnf.sh
+	bash /opt/root.sh
+	
+	NOW=`date`
+	
+	rm /opt/dnf.sh  /opt/packages /opt/root.sh 
+	echo "ROOT_VERSION $(/opt/root/bin/root-config --version)" >> $APPTAINER_LABELS
+	
+%environment
+	export PATH=/opt/root/bin:/opt/analyzer/bin:$PATH
+	export ROOTSYS=$(/opt/root/bin/root-config --prefix)
+	
+%runscript
+	root  "$@"
+
+%test 
+	root --version
+	if [ $? -eq 0 ]; then
+        	echo "root is running sucessfully."
+	else
+        	echo "Build failed."
+        	exit 1
+    	fi
+%labels
+	BASE_DEF_HASH {{ DEF_HASH }}
