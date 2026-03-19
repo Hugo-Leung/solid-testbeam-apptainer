@@ -1,41 +1,24 @@
-Bootstrap: docker
-From: almalinux:9-minimal 
+Bootstrap: localimage
+From: base.sif 
 
 %arguments
 	DEF_HASH=""
 
 %setup
-mkdir ${APPTAINER_ROOTFS}/w
-mkdir ${APPTAINER_ROOTFS}/volatile
-mkdir ${APPTAINER_ROOTFS}/cache
-mkdir ${APPTAINER_ROOTFS}/scratch
-mkdir ${APPTAINER_ROOTFS}/cvmfs
-mkdir -p ${APPTAINER_ROOTFS}/opt/Rootfiles
-mkdir -p ${APPTAINER_ROOTFS}/opt/data
-mkdir -p ${APPTAINER_ROOTFS}/opt/logs
-wget https://pki.jlab.org/JLabCA.crt -O  ${APPTAINER_ROOTFS}/etc/pki/ca-trust/source/anchors/JLabCA.crt
-
 
 %files 
-	./dnf.sh /opt/dnf.sh
-	./packages /opt/packages
-	./root.sh /opt/root.sh
 	./analyzer.sh /opt/analyzer.sh
 	./SBS-offline.sh /opt/SBS-offline.sh
 	./panguin.sh /opt/panguin.sh
 %post
-	ln -s /w/work /work
-	update-ca-trust
-	bash /opt/dnf.sh
-	bash /opt/root.sh
+	microdnf update -y
 	bash /opt/analyzer.sh
 	bash /opt/panguin.sh
 	bash /opt/SBS-offline.sh
 	
 	NOW=`date`
 	
-	rm /opt/dnf.sh  /opt/packages /opt/root.sh /opt/analyzer.sh /opt/SBS-offline.sh
-	echo "ROOT_VERSION $(/opt/root/bin/root-config --version)" >> $APPTAINER_LABELS
+	rm /opt/analyzer.sh /opt/SBS-offline.sh
 	echo "ANALYZER_HASH $(git -C /opt/analyzer-src rev-parse --short HEAD)" >> $APPTAINER_LABELS
 	echo "REPLAY_HASH $(git -C /opt/SBS-replay_SOLIDtestbeam rev-parse --short HEAD)" >> $APPTAINER_LABELS
 	echo "SBS-OFFLINE_HASH $(git -C /opt/SBS-offline_SOLIDtestbeam-src rev-parse --short HEAD)" >> $APPTAINER_LABELS
@@ -43,8 +26,7 @@ wget https://pki.jlab.org/JLabCA.crt -O  ${APPTAINER_ROOTFS}/etc/pki/ca-trust/so
 	
 %environment
 	export ANALYZER=/opt/analyzer
-	export PATH=/opt/panguin/bin:/opt/root/bin:/opt/analyzer/bin:/opt/SBS-offline_SOLIDtestbeam/bin$PATH
-	export ROOTSYS=$(/opt/root/bin/root-config --prefix)
+	export PATH=/opt/panguin/bin:/opt/analyzer/bin:/opt/SBS-offline_SOLIDtestbeam/bin:$PATH
 	export LD_LIBRARY_PATH=/opt/panguin/lib64:/opt/analyzer/lib64:/opt/SBS-offline_SOLIDtestbeam/lib64/:$LD_LIBRARY_PATH
 	export ROOT_INCLUDE_PATH=/opt/SBS-offline_SOLIDtestbeam/include:/opt/analyzer/include:$ROOT_INCLUDE_PATH
 	export SBS=/opt/SBS-offline_SOLIDtestbeam
@@ -63,7 +45,7 @@ wget https://pki.jlab.org/JLabCA.crt -O  ${APPTAINER_ROOTFS}/etc/pki/ca-trust/so
 %test 
 	analyzer -v
 	if [ $? -eq 0 ]; then
-        	echo "hcana is running sucessfully."
+        	echo "analyzer is running sucessfully."
 	else
         	echo "Build failed."
         	exit 1
