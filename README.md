@@ -68,16 +68,16 @@ This is installed in `/opt/SBS-offline_SOLIDtestbeam`
 
 * SBS-replay_SOLIDtestbeam (https://github.com/JeffersonLab/SBS-replay_SOLIDtestbeam)
 
-The replays are placed in `\opt\SBS-replay_SOLIDtestbeam`. To directly execue analyzer and run a replay
+The replays are placed in `/opt/SBS-replay_SOLIDtestbeam`. To directly execue analyzer and run a replay
 ```
 apptainer run testbeam.sif <replay script>
 ```
 
 Using custom replay
 ------------------
-To overwrite the built-in replay, bind the path to your replay to `\opt\SBS-replay_SOLIDtestbeam`
+To overwrite the built-in replay, bind the path to your replay to `/opt/SBS-replay_SOLIDtestbeam`
 ```
-apptainer shell -B <Path to replay on host>:\opt\SBS-replay_SOLIDtestbeam testbeam.sif 
+apptainer shell -B <Path to replay on host>:/opt/SBS-replay_SOLIDtestbeam testbeam.sif 
 ```
 
 
