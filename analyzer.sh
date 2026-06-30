@@ -6,7 +6,7 @@ if  [[ -z "$ROOTSYS" ]]; then
 	source /opt/root/bin/thisroot.sh
 fi
 
-VERSION="Release-1718"
+VERSION="Release-1719"
 
 git clone --depth=1  --branch ${VERSION} https://github.com/JeffersonLab/analyzer.git analyzer-src
 
