@@ -28,6 +28,7 @@ done
 
 DEF_HASH=$(git rev-parse --short HEAD)
 
+APPTAINER_BINDPATH=""
 if [ "${BUILD_BASE}" -gt "0" ]; then
 	apptainer build --build-arg DEF_HASH=${DEF_HASH} base.sif base.def
 fi
