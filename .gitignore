@@ -1,4 +1,9 @@
+#apptainer image
 *.sif
+#root output
+*.root
+*.pdf #likely to be analysis output
+
 ### macOS ###
 # General
 .DS_Store
