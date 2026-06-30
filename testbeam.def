@@ -39,6 +39,7 @@ From: base.sif
 	export OUT_DIR=/opt/Rootfiles
 	export DATA_DIR=/opt/data
 	export LOG_DIR=/opt/logs
+	export PLOTS_DIR=/opt/plots
 %runscript
 	analyzer  "$@"
 

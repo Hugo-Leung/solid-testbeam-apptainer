@@ -26,5 +26,7 @@ cmake -B build -S . -DCMAKE_INSTALL_PREFIX=/opt/SBS-offline_SOLIDtestbeam
 cmake --build build -j${njobs}
 cmake --install build
 
-sed -i -E "s/Rint\.Logon:[[:space:]]+rootlogon\.C/Rint.Logon: \/opt\/SBS-offline_SOLIDtestbeam\/etc\/rootlogon.C/g" /opt/root/etc/system.rootrc
+mkdir -p /etc/opt/SBS-offline_SOLIDtestbeam
+cp /opt/SBS-offline_SOLIDtestbeam/etc/rootlogon.C /etc/opt/SBS-offline_SOLIDtestbeam/rootlogon.C 
+sed -i -E "s/Rint\.Logon:[[:space:]]+rootlogon\.C/Rint.Logon: \/etc\/opt\/SBS-offline_SOLIDtestbeam\/rootlogon.C/g" /opt/root/etc/system.rootrc
 tail -n4 /opt/SBS-offline_SOLIDtestbeam/run_replay_here/.rootrc >>  /opt/root/etc/system.rootrc

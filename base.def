@@ -13,6 +13,7 @@ mkdir ${APPTAINER_ROOTFS}/cvmfs
 mkdir -p ${APPTAINER_ROOTFS}/opt/Rootfiles
 mkdir -p ${APPTAINER_ROOTFS}/opt/data
 mkdir -p ${APPTAINER_ROOTFS}/opt/logs
+mkdir -p ${APPTAINER_ROOTFS}/opt/plots
 wget https://pki.jlab.org/JLabCA.crt -O  ${APPTAINER_ROOTFS}/etc/pki/ca-trust/source/anchors/JLabCA.crt
 
 
